@@ -613,4 +613,14 @@ export default class BleRemotePeripheral {
     protected setManufacturerSpecificData(): void;
     protected setIBeacon(): void;
     protected _addServiceUuids(results: UUID[], data: any, bit: any): void;
+    /**
+     * Write data and get notifications.
+     * This function register the notification first, and then writes the data.
+     *
+     * @param writeChar BleCharacteristic for writeData.
+     * @param writeData
+     * @param notifyChar BleCharacteristic for waiting for notification.
+     * @param timeout the timeout in milliseconds to wait for notification. Default is 30 sec.
+     */
+    writeAndNotifyWait(writeChar: BleRemoteCharacteristic, writeData: number[], notifyChar: BleRemoteCharacteristic, timeout?: number): Promise<any>;
 }

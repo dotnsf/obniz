@@ -1017,4 +1017,29 @@ export default class BleRemotePeripheral {
       results.push(ObnizBLE._dataArray2uuidHex(one, true));
     }
   }
+
+  /**
+   * Write data and get notifications.
+   * This function register the notification first, and then writes the data.
+   *
+   * @param writeChar BleCharacteristic for writeData.
+   * @param writeData
+   * @param notifyChar BleCharacteristic for waiting for notification.
+   * @param timeout the timeout in milliseconds to wait for notification. Default is 30 sec.
+   */
+  public async writeAndNotifyWait(
+    writeChar: BleRemoteCharacteristic,
+    writeData: number[],
+    notifyChar: BleRemoteCharacteristic,
+    timeout = 30 * 1000
+  ): Promise<any> {
+    const nWait = new Promise<any>((res1, rej2) => {
+      notifyChar.registerNotifyWait((data) => res1(data));
+    });
+    const tWait = new Promise<void>((res2, rej2) => {
+      setTimeout(() => rej2(new ObnizTimeoutError('BleNotify')), timeout);
+    });
+    await writeChar.writeWait(writeData);
+    return Promise.race([nWait, tWait]);
+  }
 }
